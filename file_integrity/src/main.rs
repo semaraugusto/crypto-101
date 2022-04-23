@@ -41,13 +41,13 @@ impl Iterator for ReverseFileIter {
     type Item = (usize, Vec<u8>);
 
     fn next(&mut self) -> Option<Self::Item> {
-        println!("offset {}!", self.offset);
+        // println!("offset {}!", self.offset);
         if self.offset <= self.filesize as i64 {
             self.file.seek(SeekFrom::End(-self.offset)).unwrap();
 
             let mut buf = vec![0; KB as usize];
             let len = self.file.read(&mut buf).unwrap();
-            println!("len {}!", len);
+            // println!("len {}!", len);
 
             self.offset += 1024;
 
@@ -58,19 +58,17 @@ impl Iterator for ReverseFileIter {
 }
 
 fn sign(file: ReverseFileIter) -> Vec<u8> {
-    let mut iter = file.into_iter();
-    if let Some((len, last_block)) = iter.next() {
-        println!("last_block {:?}!", last_block.len());
-        let mut last_hash = Sha256::digest(&last_block[0..len]);
-        println!("HASH {:?}!", last_hash);
-        for (_, mut block) in iter {
-            block.extend(last_hash);
-            println!("len {:?}!", block.len());
-            last_hash = Sha256::digest(&block[0..block.len()]);
-        }
-        return last_hash.to_vec();
-    }
-    unreachable!();
+    file.into_iter()
+        .fold(vec![0; KB as usize], |mut signature, (len, mut block)| {
+            if signature == vec![0; KB as usize] {
+                signature = Sha256::digest(&block[0..len]).to_vec();
+                println!("init fold {:?}!", signature);
+                return signature;
+            }
+            block.extend(signature);
+            signature = Sha256::digest(&block[0..block.len()]).to_vec();
+            signature
+        })
 }
 
 fn main() {
