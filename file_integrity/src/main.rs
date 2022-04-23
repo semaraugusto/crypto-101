@@ -60,7 +60,8 @@ impl Iterator for ReverseFileIter {
 fn sign(file: ReverseFileIter) -> Vec<u8> {
     file.into_iter()
         .fold(vec![0; KB as usize], |mut signature, (len, mut block)| {
-            if signature == vec![0; KB as usize] {
+            // if signature == vec![0; KB as usize] {
+            if signature.iter().all(|x| *x == 0) {
                 signature = Sha256::digest(&block[0..len]).to_vec();
                 println!("init fold {:?}!", signature);
                 return signature;
