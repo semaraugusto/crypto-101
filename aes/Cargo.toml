@@ -1,0 +1,11 @@
+[package]
+name = "aes"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+hex = { version = "0.4.3" }
+block-padding = "0.3.2"
+aes = "0.8.1"
