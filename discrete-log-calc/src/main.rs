@@ -80,7 +80,11 @@ impl MeetInTheMiddle {
         }
     }
 
-    fn attack(&self) -> Option<(u32, u32)> {
+    fn get_x(&self, x0: u128, x1: u128) -> u128 {
+        self.size as u128 * x0 + x1
+    }
+
+    fn attack(&self) -> Option<u128> {
         let big_g = self
             .fp
             .g
@@ -89,7 +93,8 @@ impl MeetInTheMiddle {
         let mut val = BigUint::new(vec![1]);
         for idx in 0u32..self.size {
             if let Some(val) = self.table.get(&val) {
-                return Some((idx, *val));
+                let x = self.get_x(idx as u128, *val as u128);
+                return Some(x);
             }
 
             val = &val * &big_g % &self.fp.p;
