@@ -108,7 +108,7 @@ impl MeetInTheMiddle {
 }
 
 fn main() {
-    println!("Meet-in-the-Middle Attack (MITM)");
+    println!("Meet in the Middle Attack");
     let mitm = MeetInTheMiddle::new();
     // println!("{:?}", mitm);
     let attack = mitm.attack().unwrap();
